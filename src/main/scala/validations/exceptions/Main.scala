@@ -70,13 +70,13 @@ object Main {
     val validDisplacement = 1000
     val invalidDisplacement = 2
 
-    val validCar = Car(validName, validModelYear, Engine(validDisplacement))
+    val validCar: Car = Car(validName, validModelYear, Engine(validDisplacement))
     println(s"******* $validCar *******")
 
     // This isn't very composable in a functional codebase
     try {
       // This has multiple problems with it but we only find out about one of them.
-      val invalidCar = Car(invalidName, invalidModelYear, Engine(invalidDisplacement))
+      val invalidCar: Car = Car(invalidName, invalidModelYear, Engine(invalidDisplacement))
       println(s"******* $invalidCar *******")
     } catch {
       case e: CarError => println(s"******* ${e.message} *******")
