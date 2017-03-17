@@ -8,51 +8,30 @@ sealed trait CarError {
 }
 
 class NameEmptyError extends CarError {
-  override val message: String = "Invalid car name!"
+  override val message: String =
+    "Invalid car name!"
 }
 
 class ModelYearOutsideValidRangeError extends CarError {
-  override val message: String = "Invalid car model name!"
+  override val message: String =
+    "Invalid car model name!"
 }
 
-class DisplacementOutOfValidRangeError extends CarError {
-  override val message: String = "Invalid engine displacement!"
-}
-
-
-class Car(name: String, modelYear: Int, engine: Engine) {
-  override def toString: String = {
-    s"Car: name=$name, model year=$modelYear, engine=$engine"
-  }
+class Car(name: String, modelYear: Int) {
+  override def toString: String =
+    s"Car: name=$name, model year=$modelYear"
 }
 
 /** ******** Domain objects *****************/
 object Car {
   // This type signature now tells you that either an error can happen or a car is created.
-  def apply(name: String, modelYear: Int, engine: Engine): Either[CarError, Car] = {
+  def apply(name: String, modelYear: Int): Either[CarError, Car] = {
     if (name.isEmpty) {
       Left(new NameEmptyError)
     } else if (modelYear < 1900 || modelYear > LocalDateTime.now().getYear) {
       Left(new ModelYearOutsideValidRangeError)
     } else {
-      Right(new Car(name, modelYear, engine))
-    }
-  }
-}
-
-class Engine(displacementInCubicCentimeters: Int) {
-  override def toString: String = {
-    s"Engine: displacement=$displacementInCubicCentimeters"
-  }
-}
-
-object Engine {
-  // This type signature now tells you that either an error can happen or an engine is created.
-  def apply(displacementInCubicCentimeters: Int): Either[CarError, Engine] = {
-    if (displacementInCubicCentimeters < 650 || displacementInCubicCentimeters > 5700) {
-      Left(new DisplacementOutOfValidRangeError)
-    } else {
-      Right(new Engine(displacementInCubicCentimeters))
+      Right(new Car(name, modelYear))
     }
   }
 }
@@ -67,20 +46,11 @@ object Main {
     val validModelYear = 2015
     val invalidModelYear = 1200
 
-    val validDisplacement = 1000
-    val invalidDisplacement = 2
-
-    val validCar: Either[CarError, Car] = for {
-      e <- Engine(validDisplacement)
-      c <- Car(validName, validModelYear, e)
-    } yield c
+    val validCar: Either[CarError, Car] = Car(validName, validModelYear)
 
     validCar.fold(handleInvalidCar, handleValidCar)
 
-    val invalidCar: Either[CarError, Car] = for {
-      e <- Engine(invalidDisplacement)
-      c <- Car(invalidName, invalidModelYear, e)
-    } yield c
+    val invalidCar: Either[CarError, Car] = Car(invalidName, invalidModelYear)
 
     // This is better but we only learn about the first error that happens that
     // makes the whole car invalid.

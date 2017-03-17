@@ -8,54 +8,34 @@ sealed trait CarError extends Exception {
 }
 
 class NameEmptyError extends CarError {
-  override val message: String = "Invalid car name!"
+  override val message: String =
+    "Invalid car name!"
 }
 
 class ModelYearOutsideValidRangeError extends CarError {
-  override val message: String = "Invalid car model name!"
+  override val message: String =
+    "Invalid car model name!"
 }
 
-class DisplacementOutOfValidRangeError extends CarError {
-  override val message: String = "Invalid engine displacement!"
-}
-
-
-class Car(name: String, modelYear: Int, engine: Engine) {
-  override def toString: String = {
-    s"Car: name=$name, model year=$modelYear, engine=$engine"
-  }
+class Car(name: String, modelYear: Int) {
+  override def toString: String =
+    s"Car: name=$name, model year=$modelYear"
 }
 
 /** ******** Domain objects *****************/
 object Car {
   // This type signature lies because it can return a car or throw an exception.
-  def apply(name: String, modelYear: Int, engine: Engine): Car = {
+  def apply(name: String, modelYear: Int): Car = {
     if (name.isEmpty) {
       throw new NameEmptyError
     } else if (modelYear < 1900 || modelYear > LocalDateTime.now().getYear) {
       throw new ModelYearOutsideValidRangeError
     } else {
-      new Car(name, modelYear, engine)
+      new Car(name, modelYear)
     }
   }
 }
 
-class Engine(displacementInCubicCentimeters: Int) {
-  override def toString: String = {
-    s"Engine: displacement=$displacementInCubicCentimeters"
-  }
-}
-
-object Engine {
-  // This type signature lies because it can return an engine or throw an exception.
-  def apply(displacementInCubicCentimeters: Int): Engine = {
-    if (displacementInCubicCentimeters < 650 || displacementInCubicCentimeters > 5700) {
-      throw new DisplacementOutOfValidRangeError
-    } else {
-      new Engine(displacementInCubicCentimeters)
-    }
-  }
-}
 
 /** ******** Main program *****************/
 object Main {
@@ -67,16 +47,13 @@ object Main {
     val validModelYear = 2015
     val invalidModelYear = 1200
 
-    val validDisplacement = 1000
-    val invalidDisplacement = 2
-
-    val validCar: Car = Car(validName, validModelYear, Engine(validDisplacement))
+    val validCar: Car = Car(validName, validModelYear)
     println(s"******* $validCar *******")
 
-    // This isn't very composable in a functional codebase
+    // This isn't very composible in a functional codebase
     try {
       // This has multiple problems with it but we only find out about one of them.
-      val invalidCar: Car = Car(invalidName, invalidModelYear, Engine(invalidDisplacement))
+      val invalidCar: Car = Car(invalidName, invalidModelYear)
       println(s"******* $invalidCar *******")
     } catch {
       case e: CarError => println(s"******* ${e.message} *******")
