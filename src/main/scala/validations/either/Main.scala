@@ -58,6 +58,8 @@ object Main {
     invalidCar.fold(handleInvalidCar, handleValidCar)
   }
 
+  // You know what went wrong but you only get the first one.
+  // This isn't great because you can't tell the user what they need to fix.
   private def handleInvalidCar(e: CarError) =
     println(s"******* Invalid car! Reason: ${e.message}! *******")
 

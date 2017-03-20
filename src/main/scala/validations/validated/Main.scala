@@ -44,6 +44,11 @@ object Car {
     }
 
     // Combine the validated fields into the car
+    // Instead of forming a monad to chain results,
+    // Validated is an applicative functor that allows us to
+    // consolidate all of the errors or the successful results
+    // Either the success case is a tuple with the valid values
+    // or the failure case is a Non-Empty list of CarErrors.
     (nameResult |@| yearResult).map(
       (name, year) => new Car(name, year)
     )
@@ -73,6 +78,7 @@ object Main {
     invalidCar.fold(handleInvalidCar, handleValidCar)
   }
 
+  // Now I have a list of all of the things that went wrong.
   private def handleInvalidCar(es: NonEmptyList[CarError]) =
     println(s"******* Invalid car! Reasons: ${es.map(_.message).toList.mkString(", ")} *******")
 

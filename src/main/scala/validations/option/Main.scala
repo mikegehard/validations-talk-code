@@ -44,6 +44,7 @@ object Main {
     invalidCar.fold(handleInvalidCar)(handleValidCar)
   }
 
+  // No way to tell what went wrong...you just know that a car didn't get created.
   private def handleInvalidCar() =
     println("******* Invalid car! *******")
 
