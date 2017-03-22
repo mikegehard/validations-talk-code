@@ -1,6 +1,8 @@
-package validations.exceptions
+package validations.tryWithExceptions
 
 import java.time.LocalDateTime
+
+import scala.util.Try
 
 // Make constructor private so you can't construct an invalid Car.
 class Car private(name: String, modelYear: Int) {
@@ -11,15 +13,17 @@ class Car private(name: String, modelYear: Int) {
 /** ******** Domain objects *****************/
 object Car {
   // Put validations here so that you can only create valid cars.
-  // This type signature lies because it can return a car or throw an exception.
-  def apply(name: String, modelYear: Int): Car = {
-    if (name.isEmpty) {
-      throw new NameEmptyError
-    } else if (modelYear < 1900 || modelYear > LocalDateTime.now().getYear) {
-      throw new ModelYearOutsideValidRangeError
-    } else {
-      new Car(name, modelYear)
-    }
+  // This type signature reflects reality because Try signals an exception could occur
+  def apply(name: String, modelYear: Int): Try[Car] = {
+    Try(
+      if (name.isEmpty) {
+        throw new NameEmptyError
+      } else if (modelYear < 1900 || modelYear > LocalDateTime.now().getYear) {
+        throw new ModelYearOutsideValidRangeError
+      } else {
+        new Car(name, modelYear)
+      }
+    )
   }
 }
 
@@ -45,16 +49,17 @@ object Main {
     val validModelYear = 2015
     val invalidModelYear = 1200
 
-    val validCar: Car = Car(validName, validModelYear)
-    println(s"******* $validCar *******")
+    val validCar: Try[Car] = Car(validName, validModelYear)
+    validCar.fold(handleInvalidCar, handleValidCar)
 
-    // This isn't very composible in a functional codebase
-    try {
-      // This has multiple problems with it but we only find out about one of them.
-      val invalidCar: Car = Car(invalidName, invalidModelYear)
-      println(s"******* $invalidCar *******")
-    } catch {
-      case e: CarError => println(s"******* ${e.getMessage} *******")
-    }
+    val invalidCar: Try[Car] = Car(invalidName, invalidModelYear)
+    invalidCar.fold(handleInvalidCar, handleValidCar)
   }
+
+  // Only one error is handled even if there are multiple.
+  private def handleInvalidCar(e: Throwable): Unit =
+    println(s"******* Invalid car! ${e.getMessage} *******")
+
+  private def handleValidCar(c: Car): Unit =
+    println(s"******* $c *******")
 }

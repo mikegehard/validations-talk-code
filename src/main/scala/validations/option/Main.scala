@@ -45,7 +45,7 @@ object Main {
   }
 
   // No way to tell what went wrong...you just know that a car didn't get created.
-  private def handleInvalidCar() =
+  private def handleInvalidCar(): Unit =
     println("******* Invalid car! *******")
 
   private def handleValidCar(c: Car): Unit =
