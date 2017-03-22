@@ -11,14 +11,19 @@ class Car(name: String, modelYear: Int) {
 object Car {
   // This type signature now tells you that either an error can happen or a car is created.
   def apply(name: String, modelYear: Int): Either[CarError, Car] = {
-    if (name.isEmpty) {
+    if (invalidName(name))
       Left(new NameEmptyError)
-    } else if (modelYear < 1900 || modelYear > LocalDateTime.now().getYear) {
+    else if (invalidModelYear(modelYear))
       Left(new ModelYearOutsideValidRangeError)
-    } else {
+    else
       Right(new Car(name, modelYear))
-    }
   }
+
+  private def invalidName(value: String): Boolean =
+    value.isEmpty
+
+  private def invalidModelYear(value: Int): Boolean =
+    value < 1900 || value > LocalDateTime.now().getYear
 }
 
 /** ******** Errors *****************/
