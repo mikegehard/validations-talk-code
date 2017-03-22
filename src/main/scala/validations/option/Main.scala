@@ -3,9 +3,8 @@ package validations.option
 import java.time.LocalDateTime
 
 class Car(name: String, modelYear: Int) {
-  override def toString: String = {
+  override def toString: String =
     s"Car: name=$name, model year=$modelYear"
-  }
 }
 
 /** ******** Domain objects *****************/
@@ -41,6 +40,8 @@ object Main {
 
     // Much nicer than the exception case because we now tell you what happens in both cases, success and failure.
     // Downside here is we have no idea about went wrong, we just know that we have an invalid car.
+    // A great option for when you have only one thing that could go wrong...
+    // like finding one record in the database (found/not found).
     invalidCar.fold(handleInvalidCar)(handleValidCar)
   }
 

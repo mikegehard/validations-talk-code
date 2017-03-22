@@ -2,21 +2,6 @@ package validations.either
 
 import java.time.LocalDateTime
 
-/** ******** Errors *****************/
-sealed trait CarError {
-  val message: String
-}
-
-class NameEmptyError extends CarError {
-  override val message: String =
-    "Invalid car name!"
-}
-
-class ModelYearOutsideValidRangeError extends CarError {
-  override val message: String =
-    "Invalid car model name!"
-}
-
 class Car(name: String, modelYear: Int) {
   override def toString: String =
     s"Car: name=$name, model year=$modelYear"
@@ -34,6 +19,21 @@ object Car {
       Right(new Car(name, modelYear))
     }
   }
+}
+
+/** ******** Errors *****************/
+sealed trait CarError {
+  val message: String
+}
+
+sealed class NameEmptyError extends CarError {
+  override val message: String =
+    "Invalid car name!"
+}
+
+sealed class ModelYearOutsideValidRangeError extends CarError {
+  override val message: String =
+    "Invalid car model name!"
 }
 
 /** ******** Main program *****************/
@@ -61,7 +61,7 @@ object Main {
   // You know what went wrong but you only get the first one.
   // This isn't great because you can't tell the user what they need to fix.
   private def handleInvalidCar(e: CarError) =
-    println(s"******* Invalid car! Reason: ${e.message}! *******")
+    println(s"******* Invalid car! Reason: ${e.message} *******")
 
   private def handleValidCar(c: Car): Unit =
     println(s"******* $c *******")
