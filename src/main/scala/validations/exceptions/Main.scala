@@ -2,6 +2,27 @@ package validations.exceptions
 
 import java.time.LocalDateTime
 
+// Make constructor private so you can't construct an invalid Car.
+class Car private (name: String, modelYear: Int) {
+  override def toString: String =
+    s"Car: name=$name, model year=$modelYear"
+}
+
+/** ******** Domain objects *****************/
+object Car {
+  // Put validations here so that you can only create valid cars.
+  // This type signature lies because it can return a car or throw an exception.
+  def apply(name: String, modelYear: Int): Car = {
+    if (name.isEmpty) {
+      throw new NameEmptyError
+    } else if (modelYear < 1900 || modelYear > LocalDateTime.now().getYear) {
+      throw new ModelYearOutsideValidRangeError
+    } else {
+      new Car(name, modelYear)
+    }
+  }
+}
+
 /** ******** Errors *****************/
 sealed trait CarError extends Exception {
   val message: String
@@ -15,25 +36,6 @@ class NameEmptyError extends CarError {
 class ModelYearOutsideValidRangeError extends CarError {
   override val message: String =
     "Invalid car model name!"
-}
-
-class Car(name: String, modelYear: Int) {
-  override def toString: String =
-    s"Car: name=$name, model year=$modelYear"
-}
-
-/** ******** Domain objects *****************/
-object Car {
-  // This type signature lies because it can return a car or throw an exception.
-  def apply(name: String, modelYear: Int): Car = {
-    if (name.isEmpty) {
-      throw new NameEmptyError
-    } else if (modelYear < 1900 || modelYear > LocalDateTime.now().getYear) {
-      throw new ModelYearOutsideValidRangeError
-    } else {
-      new Car(name, modelYear)
-    }
-  }
 }
 
 
